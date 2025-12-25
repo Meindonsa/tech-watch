@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ArticleDao extends JpaRepository<Article, Long> {
 
-    Article existsByUrl(String url);
+    boolean existsByUrl(String url);
 
     @Query(
             "SELECT a FROM Article a WHERE (:key IS NULL OR LOWER(a.title) LIKE "

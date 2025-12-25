@@ -24,7 +24,7 @@ public class ArticleService implements IArticleService {
 
     public void saveNewArticles(List<Article> articles) {
         for (Article article : articles) {
-            if (articleDao.existsByUrl(article.getUrl()) != null) {
+            if (!articleDao.existsByUrl(article.getUrl())) {
                 articleDao.save(article);
                 log.info("Nouvel article sauvegardé: {}", article.getTitle());
             }

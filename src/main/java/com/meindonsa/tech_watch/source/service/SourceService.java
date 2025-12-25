@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,11 +33,9 @@ public class SourceService implements ISourceService {
     @Autowired private WebScrapingService webScrapingService;
     @Autowired private SourceDetectionService detectionService;
 
-    // @PostConstruct
-    // @Scheduled(fixedDelay = 3600000) // Toutes les heures
+    @Scheduled(fixedDelay = 3600000) // Toutes les heures
     public void aggregateNews() {
         log.info("Démarrage de l'agrégation des news");
-
         List<Source> sources = sourceDao.findByActive(true);
 
         for (Source source : sources) {
@@ -95,13 +94,8 @@ public class SourceService implements ISourceService {
 
     @Override
     public void updateSource(SourceView view) {
-        Source source = MapperUtils.map(view, retrieveByFunctionalID(view.getFid()));
-        SourceDetectionResult detection = detectionService.detectSource(view.getUrl());
-        source.setType(detection.getType());
-        source.setUrl(
-                detection.getFeedUrl() != null
-                        ? detection.getFeedUrl()
-                        : detection.getOriginalUrl());
+        Source source = retrieveByFunctionalID(view.getFid());
+        source.setName(view.getName());
         sourceDao.save(source);
     }
 

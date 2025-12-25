@@ -1,4 +1,133 @@
 package com.meindonsa.tech_watch.source.service;
 
-public class SourceService {
+import com.meindonsa.tech_watch.article.Article;
+import com.meindonsa.tech_watch.article.ArticleService;
+import com.meindonsa.tech_watch.article.ArticleView;
+import com.meindonsa.tech_watch.article.ArticlesView;
+import com.meindonsa.tech_watch.shared.PaginatedRequest;
+import com.meindonsa.tech_watch.shared.Utils;
+import com.meindonsa.tech_watch.source.Source;
+import com.meindonsa.tech_watch.source.SourceDao;
+import com.meindonsa.tech_watch.source.SourceDetectionResult;
+import com.meindonsa.tech_watch.source.SourceView;
+import com.meindonsa.tech_watch.source.SourcesView;
+import com.meindonsa.toolbox.exception.FunctionalException;
+import com.meindonsa.toolbox.utils.MapperUtils;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Slf4j
+@Service
+public class SourceService implements ISourceService{
+
+    @Autowired private SourceDao sourceDao;
+    @Autowired private ArticleService articleService;
+    @Autowired private RssFeedService rssFeedService;
+    @Autowired private WebScrapingService webScrapingService;
+    @Autowired private SourceDetectionService detectionService;
+
+    //@PostConstruct
+    //@Scheduled(fixedDelay = 3600000) // Toutes les heures
+    public void aggregateNews() {
+        log.info("Démarrage de l'agrégation des news");
+
+        List<Source> sources = sourceDao.findByActive(true);
+
+        for (Source source : sources) {
+            try {
+                List<Article> articles = fetchArticles(source);
+                articleService.saveNewArticles(articles);
+
+                source.setLastFetch(LocalDateTime.now());
+                sourceDao.save(source);
+
+            } catch (Exception e) {
+                log.error("Erreur lors de l'agrégation pour: {}", source.getName(), e);
+            }
+        }
+
+        log.info("Agrégation terminée");
+    }
+
+    private List<Article> fetchArticles(Source source) {
+        return switch (source.getType()) {
+            case RSS -> rssFeedService.fetchRssFeed(source);
+            case SCRAPING -> webScrapingService.scrapeWebsite(source);
+        };
+    }
+
+    public Source retrieveByFunctionalID(String fid){
+        Source source = sourceDao.findByFid(fid);
+        if(source == null)
+            throw new FunctionalException("Source inexistante");
+        return source;
+    }
+
+    @Override
+    public void deleteSource(String fid) {
+        Source source = retrieveByFunctionalID(fid);
+        sourceDao.delete(source);
+    }
+
+    @Override
+    public void createSource(SourceView view) {
+        SourceDetectionResult detection = detectionService.detectSource(view.getUrl());
+        Source source = new Source();
+        source.setActive(true);
+        source.setName(view.getName());
+        source.setType(detection.getType());
+        source.setUrl(detection.getOriginalUrl());
+
+        if (detection.isFeedFound()) {
+            source.setUrl(detection.getFeedUrl());
+            log.info("Flux RSS détecté pour {}: {}", view.getName(), detection.getFeedUrl());
+        } else {
+            log.info("Pas de flux RSS, scraping configuré pour: {}", view.getName());
+        }
+
+        sourceDao.save(source);
+    }
+
+    @Override
+    public void updateSource(SourceView view) {
+        Source source = MapperUtils.map(view, retrieveByFunctionalID(view.getFid()));
+        SourceDetectionResult detection = detectionService.detectSource(view.getUrl());
+        source.setType(detection.getType());
+        source.setUrl(detection.getFeedUrl() != null ? detection.getFeedUrl() : detection.getOriginalUrl());
+        sourceDao.save(source);
+    }
+
+    @Override
+    public SourceView retrieveSource(String fid) {
+        return MapperUtils.map(retrieveByFunctionalID(fid), SourceView.class);
+    }
+
+    @Override
+    public SourceDetectionResult detectSource(String url) {
+        return detectionService.detectSource(url);
+    }
+
+    @Override
+    public SourcesView retrieveSources(PaginatedRequest request) {
+        Pageable pageable = Utils.getPaging(request);
+        Page<Source> sources = sourceDao.search(Utils.getString(request.getSearchKey()), pageable);
+        return response(sources);
+    }
+
+    private SourcesView response(Page<Source> page){
+        SourcesView response = new SourcesView();
+        response.setObjects(MapperUtils.mapAll(page.getContent(), SourceView.class));
+        response.setIndex(page.getNumber());
+        response.setSize(page.getSize());
+        response.setTotal(page.getTotalElements());
+        return response;
+    }
 }

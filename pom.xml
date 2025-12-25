@@ -20,8 +20,10 @@
 		<jsoup.version>1.17.2</jsoup.version>
 		<lombok.version>1.18.36</lombok.version>
 		<rometools.version>2.1.0</rometools.version>
+		<modelmapper.version>3.2.2</modelmapper.version>
 		<toolbox-config.version>0.0.4</toolbox-config.version>
 		<jakarta-annotation.version>3.0.0</jakarta-annotation.version>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -60,6 +62,11 @@
 			<optional>true</optional>
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${modelmapper.version}</version>
 		</dependency>
 		<!-- Pour RSS/Atom -->
 		<dependency>

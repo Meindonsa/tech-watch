@@ -12,6 +12,8 @@
           <option name="goals">
             <list>
               <option value="clean" />
+              <option value="install" />
+              <option value="-DskipTest" />
             </list>
           </option>
           <option name="multimoduleDir" />

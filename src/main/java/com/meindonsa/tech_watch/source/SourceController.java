@@ -35,6 +35,20 @@ public class SourceController implements ISourceService {
         sourceService.deleteSource(fid);
     }
 
+    @PutMapping("/enable/{fid}")
+    @Operation(description = "Enable source")
+    @Override
+    public void enableSource(@PathVariable String fid) {
+        sourceService.enableSource(fid);
+    }
+
+    @PutMapping("/disable/{fid}")
+    @Operation(description = "Disable source")
+    @Override
+    public void disableSource(@PathVariable String fid) {
+        sourceService.disableSource(fid);
+    }
+
     @PostMapping("/create")
     @Operation(description = "Create source")
     @Override

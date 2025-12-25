@@ -74,6 +74,22 @@ public class SourceService implements ISourceService {
     }
 
     @Override
+    public void enableSource(String fid) {
+        Source source = retrieveByFunctionalID(fid);
+        if (source.isActive()) return;
+        source.setActive(true);
+        sourceDao.save(source);
+    }
+
+    @Override
+    public void disableSource(String fid) {
+        Source source = retrieveByFunctionalID(fid);
+        if (!source.isActive()) return;
+        source.setActive(false);
+        sourceDao.save(source);
+    }
+
+    @Override
     public void createSource(SourceView view) {
         SourceDetectionResult detection = detectionService.detectSource(view.getUrl());
         Source source = new Source();

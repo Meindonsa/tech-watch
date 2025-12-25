@@ -9,6 +9,10 @@ public interface ISourceService {
 
     void deleteSource(String fid);
 
+    void enableSource(String fid);
+
+    void disableSource(String fid);
+
     void createSource(SourceView view);
 
     void updateSource(SourceView view);

@@ -3,6 +3,78 @@ server:
   servlet:
     contextPath: /services-layer
 
+api:
+  info:
+    title: Media API
+    description: API definition
+    version: ${project.version}
+    licence:
+      name: "Apache 2.0"
+      url: "https://apache.org/licenses/LICENSE-2.0"
+    contact:
+      name: "Boris Axel"
+      email: e.borisaxel@gmail.com
+      #url: https://ossas-it.com
+
+jasypt:
+  encryptor:
+    password: ${SECRET_ENCRYPTION_KEY}
+    algorithm: PBEWithMD5AndDES
+    key-obtention-iterations: 1000
+    pool-size: 30
+    provider-name: SunJCE
+    salt-generator-className: org.jasypt.salt.RandomSaltGenerator
+    iv-generator-className: org.jasypt.iv.NoIvGenerator
+    string-output-type: base64
+
+# Spring
 spring:
-  application:
-    name: tech-watch
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/techwatch?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+    username: exp_user
+    password: ossas2023
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  # JPA
+  jpa:
+    database: MYSQL
+    show-sql: false
+    ## Possible values : create, update, create-drop
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+
+  # Jackson
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  main:
+    allow-circular-references: true
+  banner:
+    location: classpath:banner.txt
+
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.aws.autoconfigure.context.ContextInstanceDataAutoConfiguration
+      - org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration
+      - org.springframework.cloud.aws.autoconfigure.context.ContextRegionProviderAutoConfiguration
+
+# Logging
+logging:
+  level:
+    com.meindonsa: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql: info
+
+hibernate:
+  discriminator:
+    ignore_explicit_for_joined: true
+
+# Messages
+message:
+  welcome:
+    subject: Bienvenue sur Tech-watch
+    content: Nous sommes ravis de vous compter parmi nous.

@@ -1,4 +1,4 @@
-package com.meindonsa.tech_watch.entity;
+package com.meindonsa.tech_watch.shared;
 
 import com.meindonsa.toolbox.utils.Functions;
 import jakarta.persistence.GeneratedValue;

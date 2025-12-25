@@ -1,3 +1,8 @@
+server:
+  port: 23000
+  servlet:
+    contextPath: /services-layer
+
 spring:
   application:
     name: tech-watch

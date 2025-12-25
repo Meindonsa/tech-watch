@@ -2,7 +2,9 @@ package com.meindonsa.tech_watch.source.service;
 
 import com.meindonsa.tech_watch.article.Article;
 import com.meindonsa.tech_watch.source.Source;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,10 +24,8 @@ public class WebScrapingService {
         List<Article> articles = new ArrayList<>();
 
         try {
-            Document doc = Jsoup.connect(source.getUrl())
-                    .userAgent("Mozilla/5.0")
-                    .timeout(10000)
-                    .get();
+            Document doc =
+                    Jsoup.connect(source.getUrl()).userAgent("Mozilla/5.0").timeout(10000).get();
 
             Elements articleElements = doc.select(source.getArticleSelector());
 

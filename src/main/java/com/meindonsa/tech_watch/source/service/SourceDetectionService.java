@@ -5,7 +5,9 @@ import com.meindonsa.tech_watch.source.SourceType;
 import com.meindonsa.toolbox.exception.FunctionalException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,9 +23,8 @@ import java.util.List;
 @Service
 public class SourceDetectionService {
 
-    private static final List<String> RSS_INDICATORS = List.of(
-            "/feed", "/rss", "/atom", ".xml", "/feeds"
-    );
+    private static final List<String> RSS_INDICATORS =
+            List.of("/feed", "/rss", "/atom", ".xml", "/feeds");
 
     public SourceType detectSourceType(String url) {
         url = sanitizeUrl(url);
@@ -103,16 +104,17 @@ public class SourceDetectionService {
     }
 
     private String tryCommonRssPaths(String url) {
-        List<String> commonPaths = List.of(
-                "/feed",
-                "/rss",
-                "/atom",
-                "/feed.xml",
-                "/rss.xml",
-                "/atom.xml",
-                "/index.xml",
-                "/feeds/posts/default"  // Blogger
-        );
+        List<String> commonPaths =
+                List.of(
+                        "/feed",
+                        "/rss",
+                        "/atom",
+                        "/feed.xml",
+                        "/rss.xml",
+                        "/atom.xml",
+                        "/index.xml",
+                        "/feeds/posts/default" // Blogger
+                        );
 
         try {
             URL baseUrl = new URL(url);
@@ -150,10 +152,7 @@ public class SourceDetectionService {
 
     private String findRssFeedUrl(String url) {
         try {
-            Document doc = Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0")
-                    .timeout(10000)
-                    .get();
+            Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").timeout(10000).get();
 
             Elements links = doc.select("link[type*=rss], link[type*=atom], link[type*=xml]");
 

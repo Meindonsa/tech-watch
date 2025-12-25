@@ -10,8 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration
 public class TechWatchApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TechWatchApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(TechWatchApplication.class, args);
+    }
 }

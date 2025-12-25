@@ -6,7 +6,9 @@ import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -42,10 +44,10 @@ public class RssFeedService {
                 // Date de publication
                 if (entry.getPublishedDate() != null) {
                     article.setPublishedDate(
-                            entry.getPublishedDate().toInstant()
+                            entry.getPublishedDate()
+                                    .toInstant()
                                     .atZone(ZoneId.systemDefault())
-                                    .toLocalDateTime()
-                    );
+                                    .toLocalDateTime());
                 }
 
                 // Auteur

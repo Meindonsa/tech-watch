@@ -2,6 +2,7 @@ package com.meindonsa.tech_watch.shared;
 
 import com.meindonsa.toolbox.utils.Functions;
 import com.meindonsa.toolbox.view.PageInfo;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +31,7 @@ public class Utils {
                 index, size == 0 ? DEFAULT_PAGE_SIZE : size, Sort.by("id").descending());
     }
 
-    public static String getString(String value){
-        return Functions.isNullOrEmpty(value)?null:value.trim();
+    public static String getString(String value) {
+        return Functions.isNullOrEmpty(value) ? null : value.trim();
     }
 }

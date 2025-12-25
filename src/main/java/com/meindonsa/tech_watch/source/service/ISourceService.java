@@ -18,5 +18,4 @@ public interface ISourceService {
     SourceDetectionResult detectSource(String url);
 
     SourcesView retrieveSources(PaginatedRequest request);
-
 }

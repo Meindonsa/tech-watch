@@ -2,8 +2,6 @@ package com.meindonsa.tech_watch.source.service;
 
 import com.meindonsa.tech_watch.article.Article;
 import com.meindonsa.tech_watch.article.ArticleService;
-import com.meindonsa.tech_watch.article.ArticleView;
-import com.meindonsa.tech_watch.article.ArticlesView;
 import com.meindonsa.tech_watch.shared.PaginatedRequest;
 import com.meindonsa.tech_watch.shared.Utils;
 import com.meindonsa.tech_watch.source.Source;
@@ -13,12 +11,12 @@ import com.meindonsa.tech_watch.source.SourceView;
 import com.meindonsa.tech_watch.source.SourcesView;
 import com.meindonsa.toolbox.exception.FunctionalException;
 import com.meindonsa.toolbox.utils.MapperUtils;
-import jakarta.annotation.PostConstruct;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,7 +24,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class SourceService implements ISourceService{
+public class SourceService implements ISourceService {
 
     @Autowired private SourceDao sourceDao;
     @Autowired private ArticleService articleService;
@@ -34,8 +32,8 @@ public class SourceService implements ISourceService{
     @Autowired private WebScrapingService webScrapingService;
     @Autowired private SourceDetectionService detectionService;
 
-    //@PostConstruct
-    //@Scheduled(fixedDelay = 3600000) // Toutes les heures
+    // @PostConstruct
+    // @Scheduled(fixedDelay = 3600000) // Toutes les heures
     public void aggregateNews() {
         log.info("Démarrage de l'agrégation des news");
 
@@ -64,10 +62,9 @@ public class SourceService implements ISourceService{
         };
     }
 
-    public Source retrieveByFunctionalID(String fid){
+    public Source retrieveByFunctionalID(String fid) {
         Source source = sourceDao.findByFid(fid);
-        if(source == null)
-            throw new FunctionalException("Source inexistante");
+        if (source == null) throw new FunctionalException("Source inexistante");
         return source;
     }
 
@@ -101,7 +98,10 @@ public class SourceService implements ISourceService{
         Source source = MapperUtils.map(view, retrieveByFunctionalID(view.getFid()));
         SourceDetectionResult detection = detectionService.detectSource(view.getUrl());
         source.setType(detection.getType());
-        source.setUrl(detection.getFeedUrl() != null ? detection.getFeedUrl() : detection.getOriginalUrl());
+        source.setUrl(
+                detection.getFeedUrl() != null
+                        ? detection.getFeedUrl()
+                        : detection.getOriginalUrl());
         sourceDao.save(source);
     }
 
@@ -122,7 +122,7 @@ public class SourceService implements ISourceService{
         return response(sources);
     }
 
-    private SourcesView response(Page<Source> page){
+    private SourcesView response(Page<Source> page) {
         SourcesView response = new SourcesView();
         response.setObjects(MapperUtils.mapAll(page.getContent(), SourceView.class));
         response.setIndex(page.getNumber());

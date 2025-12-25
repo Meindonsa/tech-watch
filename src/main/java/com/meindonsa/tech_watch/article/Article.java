@@ -2,6 +2,7 @@ package com.meindonsa.tech_watch.article;
 
 import com.meindonsa.tech_watch.shared.BaseEntity;
 import com.meindonsa.tech_watch.source.Source;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +27,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_article_fid",
-                        columnNames = {"fid"})
+            @UniqueConstraint(
+                    name = "uk_article_fid",
+                    columnNames = {"fid"})
         })
 public class Article extends BaseEntity {
 

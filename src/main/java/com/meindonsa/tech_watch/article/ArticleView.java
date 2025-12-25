@@ -1,10 +1,10 @@
 package com.meindonsa.tech_watch.article;
 
 import com.meindonsa.tech_watch.source.SourceView;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 

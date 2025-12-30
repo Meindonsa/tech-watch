@@ -1,32 +1,45 @@
 #!/bin/bash
 
-# Chemins relatifs
 OPTIONS_FILE="options.json"
 PACKAGE_DIR="techwatch-api"
 
-echo "🔍 Lecture de la configuration depuis $OPTIONS_FILE..."
-
-# 1. Extraire l'URL du repo GitHub depuis options.json
+# 1. Extraire l'URL du repo GitHub
 REPO_URL=$(jq -r '.github' "$OPTIONS_FILE")
 
-if [ "$REPO_URL" == "null" ] || [ -z "$REPO_URL" ]; then
-    echo "❌ Erreur: Impossible de trouver l'URL github dans $OPTIONS_FILE"
-    exit 1
-fi
-
-# 2. Aller dans le dossier du package généré
+# 2. Aller dans le dossier
 cd "$PACKAGE_DIR" || exit
 
-# 3. Ajouter uniquement publishConfig et repository au package.json
-echo "📝 Mise à jour de la configuration de publication..."
+# 3. Préparer le package.json original
+echo "📝 Mise à jour du package.json..."
 TMP_JSON=$(mktemp)
 jq --arg repo_url "$REPO_URL" \
   '.publishConfig = {"registry": "https://npm.pkg.github.com"} |
    .repository = {"type": "git", "url": $repo_url}' \
    package.json > "$TMP_JSON" && mv "$TMP_JSON" package.json
 
-# 4. Publication
+# 4. Installation forcée des dépendances nécessaires
+echo "📦 Installation d'Axios et TypeScript..."
+npm install axios
+npm install typescript --save-dev
+
+# 5. Compilation forcée vers 'dist'
+echo "⚙️ Compilation du TypeScript vers ./dist..."
+# On ajoute l'inclusion des fichiers TS à la racine et dans apis/models
+npx tsc api.ts --outDir dist --declaration true --module commonjs --target es6 --moduleResolution node --skipLibCheck true --lib es6,dom
+
+# 6. Vérification et préparation du dossier dist
+if [ ! -d "dist" ]; then
+    echo "❌ Erreur: Le dossier 'dist' n'a pas été généré par la compilation."
+    exit 1
+fi
+
+echo "📂 Préparation du dossier de sortie..."
+cp package.json dist/
+[ -f "README.md" ] && cp README.md dist/
+
+# 7. Publication depuis le dossier dist
 echo "⬆️ Publication sur GitHub Packages..."
+cd dist || exit
 npm publish
 
-echo "🎉 Terminé ! Les infos de repository et de publication ont été ajoutées."
+echo "🎉 Package publié avec succès depuis le dossier dist !"

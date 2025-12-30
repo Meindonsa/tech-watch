@@ -1,6 +1,6 @@
 {
   "npmName": "@meindonsa/techwatch-api",
-  "npmVersion": "0.0.2",
+  "npmVersion": "0.0.4",
   "url": "http://localhost:23000/services-layer/v3/api-docs",
   "github": "https://github.com/Meindonsa/tech-watch.git"
 }

@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ArticleController implements IArticleService {
 
     @Autowired private ArticleService articleService;
+
+    @GetMapping("/article/{fid}")
+    @Operation(summary = "Retrieve article")
+    @Override
+    public ArticleView retrieveArticle(@PathVariable String fid) {
+        return articleService.retrieveArticle(fid);
+    }
 
     @PostMapping("/articles")
     @Operation(summary = "Retrieve articles")

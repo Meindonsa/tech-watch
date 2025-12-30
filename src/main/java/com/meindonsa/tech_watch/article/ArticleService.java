@@ -4,6 +4,7 @@ import com.meindonsa.tech_watch.shared.PaginatedRequest;
 import com.meindonsa.tech_watch.shared.Utils;
 import com.meindonsa.tech_watch.source.Source;
 import com.meindonsa.tech_watch.source.service.SourceService;
+import com.meindonsa.toolbox.exception.FunctionalException;
 import com.meindonsa.toolbox.utils.Functions;
 import com.meindonsa.toolbox.utils.MapperUtils;
 
@@ -32,6 +33,11 @@ public class ArticleService implements IArticleService {
     }
 
     @Override
+    public ArticleView retrieveArticle(String fid) {
+        return MapperUtils.map(retrieveByFunctionalId(fid), ArticleView.class);
+    }
+
+    @Override
     public ArticlesView retrieveArticles(PaginatedRequest request) {
         Source source =
                 Functions.isNullOrEmpty(request.getFid())
@@ -50,5 +56,11 @@ public class ArticleService implements IArticleService {
         response.setSize(page.getSize());
         response.setTotal(page.getTotalElements());
         return response;
+    }
+
+    public Article retrieveByFunctionalId(String fid) {
+        Article article = articleDao.findByFid(fid);
+        if (article == null) throw new FunctionalException("Article inexistant");
+        return article;
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ArticleDao extends JpaRepository<Article, Long> {
 
+    Article findByFid(String fid);
+
     boolean existsByUrl(String url);
 
     @Query(

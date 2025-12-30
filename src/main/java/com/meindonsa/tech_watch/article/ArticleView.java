@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleView {
+
+    private String fid;
+
     private String title;
 
     private String content;

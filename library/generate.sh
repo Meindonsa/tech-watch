@@ -26,8 +26,8 @@ package_name=$(grep '"npmName"' ../options.json | cut -d'"' -f4)
 version=$(grep '"npmVersion"' ../options.json | cut -d'"' -f4)
  echo $version
 # Nettoyage du nom pour le .tgz : on remplace @scope/ par scope-
-tgz_name=$(echo "$package_name" | tr '/' '-')   # @meindonsa/chat-api → @meindonsa-chat-api
-tgz_name=${tgz_name#@}                          # @meindonsa-chat-api → meindonsa-chat-api
+tgz_name=$(echo "$package_name" | tr '/' '-')   # @meindonsa/techwatch-api → @meindonsa-techwatch-api
+tgz_name=${tgz_name#@}                          # @meindonsa-techwatch-api → meindonsa-techwatch-api
 tgz_file="${tgz_name}-${version}.tgz"
 
 echo "3. package.json minimal"

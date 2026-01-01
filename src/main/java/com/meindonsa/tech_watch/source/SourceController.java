@@ -52,7 +52,7 @@ public class SourceController implements ISourceService {
     @PostMapping("/create")
     @Operation(description = "Create source")
     @Override
-    public void createSource(@RequestBody SourceView view) {
+    public void createSource(@RequestBody CreateSourceView view) {
         sourceService.createSource(view);
     }
 

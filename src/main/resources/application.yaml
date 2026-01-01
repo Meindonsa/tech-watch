@@ -78,3 +78,13 @@ message:
   welcome:
     subject: Bienvenue sur Tech-watch
     content: Nous sommes ravis de vous compter parmi nous.
+
+
+sources:
+  - name: "Dev.to"
+    url: "https://dev.to"
+  - name: "Hacker News"
+    url: "https://thehackernews.com"
+  - name: "Blog des modérateur"
+    url: "https://www.blogdumoderateur.com/dossier/developpement/"
+

@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -23,13 +24,16 @@ public class ArticleService implements IArticleService {
     @Autowired private ArticleDao articleDao;
     @Autowired private SourceService sourceService;
 
-    public void saveNewArticles(List<Article> articles) {
+    public List<Article> saveNewArticles(List<Article> articles) {
+        List<Article> response = new ArrayList<>();
+        if (articles.isEmpty()) return response;
         for (Article article : articles) {
             if (!articleDao.existsByUrl(article.getUrl())) {
-                articleDao.save(article);
+                response.add(article);
                 log.info("Nouvel article sauvegardé: {}", article.getTitle());
             }
         }
+        return response;
     }
 
     @Override

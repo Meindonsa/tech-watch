@@ -2,15 +2,20 @@ package com.meindonsa.tech_watch.source.service;
 
 import com.meindonsa.tech_watch.article.Article;
 import com.meindonsa.tech_watch.article.ArticleService;
+import com.meindonsa.tech_watch.config.GlobalAppConfig;
 import com.meindonsa.tech_watch.shared.PaginatedRequest;
 import com.meindonsa.tech_watch.shared.Utils;
+import com.meindonsa.tech_watch.source.CreateSourceView;
 import com.meindonsa.tech_watch.source.Source;
 import com.meindonsa.tech_watch.source.SourceDao;
 import com.meindonsa.tech_watch.source.SourceDetectionResult;
 import com.meindonsa.tech_watch.source.SourceView;
 import com.meindonsa.tech_watch.source.SourcesView;
 import com.meindonsa.toolbox.exception.FunctionalException;
+import com.meindonsa.toolbox.utils.Functions;
 import com.meindonsa.toolbox.utils.MapperUtils;
+
+import jakarta.annotation.PostConstruct;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,10 +33,20 @@ import java.util.List;
 public class SourceService implements ISourceService {
 
     @Autowired private SourceDao sourceDao;
+    @Autowired private GlobalAppConfig globalAppConfig;
     @Autowired private ArticleService articleService;
     @Autowired private RssFeedService rssFeedService;
     @Autowired private WebScrapingService webScrapingService;
     @Autowired private SourceDetectionService detectionService;
+
+    @PostConstruct
+    private void initSources() {
+        List<CreateSourceView> views = globalAppConfig.getSources();
+        if (Functions.isNullOrEmpty(views)) return;
+        for (CreateSourceView view : views) {
+            createSource(view);
+        }
+    }
 
     @Scheduled(fixedDelay = 3600000) // Toutes les heures
     public void aggregateNews() {
@@ -39,19 +54,23 @@ public class SourceService implements ISourceService {
         List<Source> sources = sourceDao.findByActive(true);
 
         for (Source source : sources) {
-            try {
-                List<Article> articles = fetchArticles(source);
-                articleService.saveNewArticles(articles);
-
-                source.setLastFetch(LocalDateTime.now());
-                sourceDao.save(source);
-
-            } catch (Exception e) {
-                log.error("Erreur lors de l'agrégation pour: {}", source.getName(), e);
-            }
+            aggregateSourceNews(source);
         }
 
         log.info("Agrégation terminée");
+    }
+
+    private void aggregateSourceNews(Source source) {
+        try {
+            List<Article> articles = articleService.saveNewArticles(fetchArticles(source));
+            if (articles.isEmpty()) return;
+            source.getArticles().addAll(articles);
+            source.setLastFetch(LocalDateTime.now());
+            sourceDao.save(source);
+
+        } catch (Exception e) {
+            log.error("Erreur lors de l'agrégation pour: {}", source.getName(), e);
+        }
     }
 
     private List<Article> fetchArticles(Source source) {
@@ -90,7 +109,7 @@ public class SourceService implements ISourceService {
     }
 
     @Override
-    public void createSource(SourceView view) {
+    public void createSource(CreateSourceView view) {
         SourceDetectionResult detection = detectionService.detectSource(view.getUrl());
         Source source = new Source();
         source.setActive(true);
@@ -109,7 +128,8 @@ public class SourceService implements ISourceService {
             log.info("Pas de flux RSS, scraping configuré pour: {}", view.getName());
         }
 
-        sourceDao.save(source);
+        source = sourceDao.save(source);
+        aggregateSourceNews(source);
     }
 
     @Override

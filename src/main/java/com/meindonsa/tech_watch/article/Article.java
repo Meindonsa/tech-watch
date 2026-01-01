@@ -36,7 +36,7 @@ public class Article extends BaseEntity {
     @Column(length = 500)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(unique = true)
@@ -49,6 +49,8 @@ public class Article extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_article_source"), nullable = false)
     private Source source;
 
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
+
     private String author;
 }

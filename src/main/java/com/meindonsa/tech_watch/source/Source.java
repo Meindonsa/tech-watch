@@ -3,6 +3,7 @@ package com.meindonsa.tech_watch.source;
 import com.meindonsa.tech_watch.article.Article;
 import com.meindonsa.tech_watch.shared.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,14 +41,8 @@ public class Source extends BaseEntity {
 
     private boolean active = true;
 
-    // Pour le scraping
-    private String articleSelector;
-    private String titleSelector;
-    private String contentSelector;
-    private String dateSelector;
-
     private LocalDateTime lastFetch;
 
-    @OneToMany(mappedBy = "source", orphanRemoval = true)
-    private List<Article> articles;
+    @OneToMany(mappedBy = "source", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Article> articles = new ArrayList<>(0);
 }

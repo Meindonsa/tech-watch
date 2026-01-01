@@ -97,6 +97,10 @@ public class SourceService implements ISourceService {
         source.setName(view.getName());
         source.setType(detection.getType());
         source.setUrl(detection.getOriginalUrl());
+        if (findByUrl(source.getUrl()) != null) {
+            log.info("L'url: {} est déjà utilisé !", source.getUrl());
+            return;
+        }
 
         if (detection.isFeedFound()) {
             source.setUrl(detection.getFeedUrl());
@@ -139,5 +143,9 @@ public class SourceService implements ISourceService {
         response.setSize(page.getSize());
         response.setTotal(page.getTotalElements());
         return response;
+    }
+
+    private Source findByUrl(String url) {
+        return sourceDao.findByUrl(url);
     }
 }

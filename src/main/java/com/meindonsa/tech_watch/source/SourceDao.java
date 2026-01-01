@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface SourceDao extends JpaRepository<Source, Long> {
 
+    Source findByUrl(String url);
+
     Source findByFid(String fid);
 
     List<Source> findByActive(boolean active);

@@ -4,6 +4,7 @@ import com.meindonsa.tech_watch.article.Article;
 import com.meindonsa.tech_watch.shared.BaseEntity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,8 +34,14 @@ import java.util.List;
         })
 public class Source extends BaseEntity {
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String url;
+
+    @Column(unique = true)
+    private String feedUrl;
 
     @Enumerated(EnumType.STRING)
     private SourceType type;

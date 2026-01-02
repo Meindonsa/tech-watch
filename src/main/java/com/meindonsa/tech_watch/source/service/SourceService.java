@@ -116,11 +116,11 @@ public class SourceService implements ISourceService {
         source.setName(view.getName());
         source.setType(detection.getType());
         source.setUrl(detection.getOriginalUrl());
-        if (findByUrl(source.getUrl()) != null) {
+        source.setFeedUrl(detection.getFeedUrl());
+        if (findByFeeUrl(source.getFeedUrl()) != null) {
             log.info("L'url: {} est déjà utilisé !", source.getUrl());
             return;
         }
-
         if (detection.isFeedFound()) {
             source.setUrl(detection.getFeedUrl());
             log.info("Flux RSS détecté pour {}: {}", view.getName(), detection.getFeedUrl());
@@ -167,5 +167,9 @@ public class SourceService implements ISourceService {
 
     private Source findByUrl(String url) {
         return sourceDao.findByUrl(url);
+    }
+
+    private Source findByFeeUrl(String feedUrl) {
+        return sourceDao.findByFeedUrl(feedUrl);
     }
 }

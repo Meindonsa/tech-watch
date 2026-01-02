@@ -13,6 +13,8 @@ public interface SourceDao extends JpaRepository<Source, Long> {
 
     Source findByFid(String fid);
 
+    Source findByFeedUrl(String feedUrl);
+
     List<Source> findByActive(boolean active);
 
     @Query("SELECT s FROM Source s WHERE :key IS NULL OR LOWER(s.name) LIKE  CONCAT('%',:key,'%')")

@@ -41,6 +41,12 @@ public class Source extends BaseEntity {
 
     private boolean active = true;
 
+    // Pour le scraping
+    private String articleSelector;
+    private String titleSelector;
+    private String contentSelector;
+    private String dateSelector;
+
     private LocalDateTime lastFetch;
 
     @OneToMany(mappedBy = "source", cascade = CascadeType.ALL, orphanRemoval = true)

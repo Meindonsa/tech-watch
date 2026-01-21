@@ -2,6 +2,7 @@ package com.meindonsa.tech_watch.source.service;
 
 import com.meindonsa.tech_watch.article.Article;
 import com.meindonsa.tech_watch.source.Source;
+import com.meindonsa.toolbox.exception.FunctionalException;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
@@ -64,7 +65,9 @@ public class RssFeedService {
             }
 
         } catch (Exception e) {
-            log.error("Erreur lors de la récupération du flux RSS: {}", source.getUrl(), e);
+            // log.error("Erreur lors de la récupération du flux RSS: {}", source.getUrl(), e);
+            throw new FunctionalException(
+                    "Erreur lors de la récupération du flux RSS: " + source.getUrl());
         }
 
         return articles;

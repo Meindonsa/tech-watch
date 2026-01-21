@@ -16,6 +16,7 @@ import com.meindonsa.toolbox.utils.Functions;
 import com.meindonsa.toolbox.utils.MapperUtils;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,7 +70,20 @@ public class SourceService implements ISourceService {
             sourceDao.save(source);
 
         } catch (Exception e) {
-            log.error("Erreur lors de l'agrégation pour: {}", source.getName(), e);
+            throw new FunctionalException("Erreur lors de l'agrégation pour: " + source.getName());
+        }
+    }
+
+    private Source aggregateNewSourceNews(Source source) {
+        try {
+            List<Article> articles = articleService.saveNewArticles(fetchArticles(source));
+            if (articles.isEmpty()) return source;
+            source.getArticles().addAll(articles);
+            source.setLastFetch(LocalDateTime.now());
+            return source;
+
+        } catch (Exception e) {
+            throw new FunctionalException("Erreur lors de l'agrégation pour: " + source.getName());
         }
     }
 
@@ -108,6 +122,7 @@ public class SourceService implements ISourceService {
         sourceDao.save(source);
     }
 
+    @Transactional
     @Override
     public void createSource(CreateSourceView view) {
         SourceDetectionResult detection = detectionService.detectSource(view.getUrl());
@@ -128,8 +143,7 @@ public class SourceService implements ISourceService {
             log.info("Pas de flux RSS, scraping configuré pour: {}", view.getName());
         }
 
-        source = sourceDao.save(source);
-        aggregateSourceNews(source);
+        sourceDao.save(aggregateNewSourceNews(source));
     }
 
     @Override

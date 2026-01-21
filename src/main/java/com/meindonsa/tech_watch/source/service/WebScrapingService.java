@@ -2,6 +2,7 @@ package com.meindonsa.tech_watch.source.service;
 
 import com.meindonsa.tech_watch.article.Article;
 import com.meindonsa.tech_watch.source.Source;
+import com.meindonsa.toolbox.exception.FunctionalException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,7 +68,8 @@ public class WebScrapingService {
             }
 
         } catch (IOException e) {
-            log.error("Erreur lors du scraping: {}", source.getUrl(), e);
+            // log.error("Erreur lors du scraping: {}", source.getUrl(), e);
+            throw new FunctionalException("Erreur lors du scraping: " + source.getUrl());
         }
 
         return articles;

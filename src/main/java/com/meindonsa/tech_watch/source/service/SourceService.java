@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +35,10 @@ import java.util.List;
 public class SourceService implements ISourceService {
 
     @Autowired private SourceDao sourceDao;
-    @Autowired private GlobalAppConfig globalAppConfig;
     @Autowired private ArticleService articleService;
     @Autowired private RssFeedService rssFeedService;
+    @Autowired SimpMessagingTemplate messagingTemplate;
+    @Autowired private GlobalAppConfig globalAppConfig;
     @Autowired private WebScrapingService webScrapingService;
     @Autowired private SourceDetectionService detectionService;
 
@@ -57,7 +59,7 @@ public class SourceService implements ISourceService {
         for (Source source : sources) {
             aggregateSourceNews(source);
         }
-
+        messagingTemplate.convertAndSend("/topic/articles/refresh", true);
         log.info("Agrégation terminée");
     }
 
@@ -104,6 +106,7 @@ public class SourceService implements ISourceService {
     public void deleteSource(String fid) {
         Source source = retrieveByFunctionalID(fid);
         sourceDao.delete(source);
+        messagingTemplate.convertAndSend("/topic/articles/refresh", true);
     }
 
     @Override
@@ -144,6 +147,7 @@ public class SourceService implements ISourceService {
         }
 
         sourceDao.save(aggregateNewSourceNews(source));
+        messagingTemplate.convertAndSend("/topic/articles/refresh", true);
     }
 
     @Override

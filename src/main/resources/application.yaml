@@ -88,3 +88,10 @@ sources:
   - name: "Blog des modérateur"
     url: "https://www.blogdumoderateur.com/dossier/developpement/"
 
+webapp:
+  website: "http://localhost:5173"
+
+socket:
+  endPoint: /sockets
+  broker: /topic
+  prefix: /ws

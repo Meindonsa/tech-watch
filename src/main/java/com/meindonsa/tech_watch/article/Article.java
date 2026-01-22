@@ -39,7 +39,7 @@ public class Article extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(unique = true)
+    @Column(columnDefinition = "LONGTEXT", unique = true)
     private String url;
 
     private LocalDateTime publishedDate;

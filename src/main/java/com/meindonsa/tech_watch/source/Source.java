@@ -37,10 +37,10 @@ public class Source extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String url;
 
-    @Column(unique = true)
+    @Column(columnDefinition = "LONGTEXT", unique = true)
     private String feedUrl;
 
     @Enumerated(EnumType.STRING)
